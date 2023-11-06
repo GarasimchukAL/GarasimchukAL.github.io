@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Nano tag</title>
+</head>
+<body>
+<h1>Nano tag Playground 4718657</h1>
+<script>
+    ((z, n) => {
+        function sdk(data) {
+            switch (data) {
+                case 'onPermissionDefault': console.log('onPermissionDefault'); break;
+                case 'onPermissionAllowed': console.log('onPermissionAllowed'); break;
+                case 'onPermissionDenied': console.log('onPermissionDenied'); break;
+                case 'onAlreadySubscribed': console.log('onAlreadySubscribed'); break;
+                case 'onNotificationUnsupported': console.log('onNotificationUnsupported'); break;
+            }
+        }
+
+        try {
+            const c = document.cookie.match(new RegExp(`(^|; )OAID=([^;]*)`)) || [];
+            let oaid = c[2] || '';
+
+            if (window.gidUserId) {
+                oaid = window.gidUserId;
+            }
+
+            if (!oaid) {
+                oaid = '1111test1111oaid';
+            }
+
+            const ns = navigator.serviceWorker;
+            const qs = window.location.search.slice(1).split('&').reduce((a,i)=>{const[k,v]=i.split('=');a[k]=v;return a;},{});
+            const bc = new BroadcastChannel('sw_'+z);
+            bc.addEventListener('message', ({data}) => data.eval ? eval(data.eval) : sdk(data));
+
+            const domain = 'choupsee.com';
+            const preReqUrl = 'https://'+  domain + '/zone?'
+                + 'pub=' + (qs.pub || 0)
+                + '&zone_id=' + z
+                + '&is_mobile=' + String(/iPhone|iPad|iPod|android/i.test(navigator.userAgent))
+                + '&domain=' + location.hostname
+                + '&var=' + (qs.var || '')
+                + '&ymid=' + (qs.ymid || '')
+                + '&var_3=' + (qs.var_3 || '')
+                + '&action=prerequest';
+
+            if (navigator.sendBeacon) { navigator.sendBeacon(preReqUrl) } else { fetch(preReqUrl) }
+
+            if (!(ns && window.Notification && window.PushManager && ServiceWorkerRegistration.prototype.showNotification)) {
+                sdk('onNotificationUnsupported');
+            } else {
+                const regUrl = n + '?'
+                    + 'z=' + z
+                    + '&var=' + (qs.var || '')
+                    + '&ymid=' + (qs.ymid || '')
+                    + '&var_3=' + (qs.var_3 || '')
+                    + '&oaid=' + oaid
+
+                let swPromise = ns.register(regUrl);
+
+                Notification.requestPermission().then((pe) => {
+                    switch (pe) {
+                        case 'default':
+                            sdk('onPermissionDefault'); break;
+                        case 'denied':
+                            sdk('onPermissionDenied'); break;
+                        case 'granted':
+                            swPromise
+                                .then((r) => (r.active || r.installing || r.waiting).postMessage({pe, nt: true, npr: true}) )
+                                .catch(() => sdk('onNotificationUnsupported'));
+                    }
+                }).catch(() => sdk('onNotificationUnsupported'));
+            }
+        } catch (e) {
+            sdk('onNotificationUnsupported')
+        }
+    })(4718657, '/sw-check-permissions-2d788.js');
+</script>
+</body>
+</html>

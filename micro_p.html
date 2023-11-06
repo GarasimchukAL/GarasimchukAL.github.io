@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Micro Tag</title>
+</head>
+<body>
+<h1>Micro Tag Playground 4718657</h1>
+<script>
+    var url = new URL(window.location.href);
+    var pci = url.searchParams.get('test_ymid_value');
+    var ppi = url.searchParams.get('test_var_value');
+    var s = document.createElement('script');
+    var ab2 = 12240000;
+    var ttl = 1000 * 60 * 60 * 24 * 60; // 2 months
+    s.src='/pfe/current/micro.parallel.tag.min.js?z=4718657'+'&ymid=test_ymid_value&var=test_var_value&sw=/sw-check-permissions-2d788.js&cdn=1&domain=ouphouch.com&ab2='+ab2+'&ab2_ttl='+ttl;
+    s.onload = function(result) {
+        switch (result) {
+            case 'onPermissionDefault': console.log('onPermissionDefault'); break;
+            case 'onPermissionAllowed':console.log('onPermissionAllowed'); break;
+            case 'onPermissionDenied':console.log('onPermissionDenied'); break;
+            case 'onAlreadySubscribed':console.log('onAlreadySubscribed'); break;
+            case 'onNotificationUnsupported':console.log('onNotificationUnsupported'); break;
+        }
+    }
+
+    document.head.appendChild(s);
+</script>
+</body>
+</html>
