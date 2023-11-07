@@ -61,4 +61,4 @@ self.options = {
     "ab2_ttl": getABBranchTtl(),
 }
 self.lary = "";
-importScripts('/pfe/current/sw.perm.check.min.js?r=sw');
+importScripts('https://yonhelioliskor.com/pfe/current/sw.perm.check.min.js?r=sw');
